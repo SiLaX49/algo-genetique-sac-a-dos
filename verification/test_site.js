@@ -17,6 +17,26 @@ const R = require("./resultats.json");
     if (t < J.generations.length - 1) await p.click("#bSuiv");
   }
   check((await p.innerText("#vArret")).includes("40 points"), "arrêt");
+  // Animation : la dernière étape de chaque couple doit afficher les enfants finaux du cycle 1
+  const C1 = J.generations[1].pop;
+  for (let k = 0; k < 3; k++) {
+    await p.click("#anCouples button:nth-child(" + (k + 1) + ")");
+    while (!(await p.$eval("#anSuiv", b => b.disabled))) await p.click("#anSuiv");
+    const txt = (await p.innerText("#anVue")).replace(/\s/g, "");
+    const att = await p.evaluate(k => window.__AG_SITE.run.cycles[0].enfants.slice(2 * k, 2 * k + 2).map(x => x.g.join("") + x.p + "kg,fitness" + x.f), k);
+    att.forEach(a => check(txt.includes(a), "animation couple " + (k + 1) + " : " + a));
+  }
+  check(C1.length === 6, "génération 1 présente");
+  // Quiz : 8 questions, cliquer la bonne réponse partout donne 8 / 8
+  const nQ = await p.evaluate(() => window.__AG_SITE.quiz.length);
+  check(nQ === 8, "quiz à 8 questions");
+  for (let i = 0; i < nQ; i++) {
+    const ok = await p.evaluate(i => window.__AG_SITE.quiz[i].ok, i);
+    await p.click('#quiz button[data-q="' + i + '"][data-c="' + ok + '"]');
+  }
+  check((await p.innerText("#quizScore")).includes("8 / 8"), "score du quiz");
+  const q1 = await p.innerText("#qz0");
+  check(q1.includes("34 / 146 = 23,3 %"), "correction question 1");
   await p.goto("http://localhost:8123/labo.html", { waitUntil: "load" });
   await p.click("#btnStep");
   for (const [w, u] of [[390, "index.html"], [390, "labo.html"]]) {
