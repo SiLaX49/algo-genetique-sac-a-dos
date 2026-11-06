@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Labo sac à dos</title>
+<meta name="description" content="Simulation interactive d'un algorithme génétique qui résout le problème du sac à dos 0/1, comparé à l'optimum exact calculé par programmation dynamique.">
+<style>
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --border: #dde1e7;
+  --text: #1a1d23;
+  --muted: #5c6470;
+  --accent: #2f6fdb;
+  --accent-soft: #dce8fb;
+  --best: #2f6fdb;
+  --mean: #d9822b;
+  --opt: #2e9e5b;
+  --danger: #c93c3c;
+  --cell-off: #e7eaef;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111317;
+    --surface: #1a1d23;
+    --surface-2: #22262e;
+    --border: #2f343d;
+    --text: #e8eaee;
+    --muted: #9aa2ae;
+    --accent: #6ea0ff;
+    --accent-soft: #233656;
+    --best: #6ea0ff;
+    --mean: #f0a258;
+    --opt: #4fc683;
+    --danger: #f07070;
+    --cell-off: #2a2f38;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111317;
+  --surface: #1a1d23;
+  --surface-2: #22262e;
+  --border: #2f343d;
+  --text: #e8eaee;
+  --muted: #9aa2ae;
+  --accent: #6ea0ff;
+  --accent-soft: #233656;
+  --best: #6ea0ff;
+  --mean: #f0a258;
+  --opt: #4fc683;
+  --danger: #f07070;
+  --cell-off: #2a2f38;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.wrap { max-width: 1140px; margin: 0 auto; padding: 24px 16px 48px; }
+header h1 { margin: 0 0 4px; font-size: 1.6rem; letter-spacing: -0.01em; }
+header p { margin: 0; color: var(--muted); max-width: 70ch; }
+.layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 16px; margin-top: 20px; }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.card h2 { font-size: 0.95rem; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.field { display: grid; grid-template-columns: 1fr 118px; align-items: center; gap: 8px; margin-bottom: 8px; }
+.field label { font-size: 0.9rem; }
+.field small { display: block; color: var(--muted); font-size: 0.78rem; line-height: 1.3; }
+input[type="number"], select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+button {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button:disabled { opacity: 0.5; cursor: default; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.stat { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; }
+.stat .k { font-size: 0.78rem; color: var(--muted); }
+.stat .v { font-size: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat .v.ok { color: var(--opt); }
+.chart-box { position: relative; width: 100%; height: 280px; }
+.chart-box canvas { width: 100%; height: 100%; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.82rem; color: var(--muted); margin-top: 8px; }
+.legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: var(--c); border-radius: 2px; }
+.legend .dash::before { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px); }
+.pop-box { width: 100%; height: 180px; }
+.pop-box canvas { width: 100%; height: 100%; display: block; border-radius: 6px; }
+.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 6px; }
+.item {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.item b { color: var(--text); font-weight: 600; }
+.item.sel { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+.item.opt { box-shadow: inset 0 -3px 0 var(--opt); }
+.hint { font-size: 0.82rem; color: var(--muted); margin: 8px 0 0; }
+.explain { margin-top: 16px; }
+.explain h3 { margin: 16px 0 4px; font-size: 1rem; }
+.explain p, .explain li { color: var(--muted); max-width: 80ch; }
+.explain ol { padding-left: 20px; }
+a { color: var(--accent); }
+footer { margin-top: 24px; font-size: 0.82rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Le labo : un sac à dos à 120 objets</h1>
+    <p><a href="index.html">Retour au cours</a>. Ici on quitte le fil rouge pour tester l'algorithme sur de grosses instances. Le labo propose aussi le tournoi, le croisement à 2 points, le croisement uniforme et la pénalité : ce sont les alternatives citées dans le cours, à comparer avec nos choix (roulette, 1 point, réparation).</p>
+  </header>
+
+  <div class="layout">
+    <div class="stack">
+      <section class="card">
+        <h2>Problème</h2>
+        <div class="field"><label for="nItems">Nombre d'objets</label><input id="nItems" type="number" min="5" max="120" value="40"></div>
+        <div class="field"><label for="capRatio">Capacité<small>en % du poids total</small></label><input id="capRatio" type="number" min="5" max="95" value="40"></div>
+        <div class="field"><label for="seed">Graine aléatoire<small>même graine, même résultat</small></label><input id="seed" type="number" value="42"></div>
+        <div class="btns"><button id="btnNew">Nouveaux objets</button></div>
+      </section>
+
+      <section class="card">
+        <h2>Paramètres de l'AG</h2>
+        <div class="field"><label for="popSize">Taille de population</label><input id="popSize" type="number" min="4" max="1000" value="60"></div>
+        <div class="field"><label for="maxGen">Générations max</label><input id="maxGen" type="number" min="1" max="5000" value="200"></div>
+        <div class="field"><label for="pc">Taux de croisement (%)</label><input id="pc" type="number" min="0" max="100" value="80"></div>
+        <div class="field"><label for="pm">Mutation par gène (%)</label><input id="pm" type="number" min="0" max="50" step="0.1" value="2"></div>
+        <div class="field"><label for="elite">Élitisme<small>individus copiés tels quels</small></label><input id="elite" type="number" min="0" max="50" value="1"></div>
+        <div class="field"><label for="selection">Sélection</label><select id="selection"><option value="roulette" selected>Roulette</option><option value="tournoi">Tournoi</option></select></div>
+        <div class="field"><label for="tourn">Taille du tournoi</label><input id="tourn" type="number" min="1" max="20" value="3"></div>
+        <div class="field"><label for="xover">Croisement</label>
+          <select id="xover"><option value="1" selected>1 point</option><option value="2">2 points</option><option value="u">Uniforme</option></select></div>
+        <div class="field"><label for="constraint">Contrainte de poids</label>
+          <select id="constraint"><option value="repair" selected>Réparation</option><option value="penalty">Pénalité</option></select></div>
+      </section>
+
+      <section class="card">
+        <h2>Exécution</h2>
+        <div class="field" style="grid-template-columns: 1fr 1.4fr"><label for="speed">Vitesse</label><input id="speed" type="range" min="1" max="5" value="3"></div>
+        <div class="btns">
+          <button id="btnRun" class="primary">Lancer</button>
+          <button id="btnStep">Pas à pas</button>
+          <button id="btnReset">Réinitialiser</button>
+        </div>
+        <p class="hint">Les paramètres de l'AG sont relus à chaque génération : tu peux les modifier en cours de route.</p>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="card">
+        <div class="stats">
+          <div class="stat"><div class="k">Génération</div><div class="v" id="sGen">0</div></div>
+          <div class="stat"><div class="k">Meilleure valeur</div><div class="v" id="sBest">0</div></div>
+          <div class="stat"><div class="k">Optimum exact</div><div class="v" id="sOpt">0</div></div>
+          <div class="stat"><div class="k">Écart à l'optimum</div><div class="v" id="sGap">-</div></div>
+          <div class="stat"><div class="k">Poids / capacité</div><div class="v" id="sWeight">0 / 0</div></div>
+          <div class="stat"><div class="k">Diversité génétique</div><div class="v" id="sDiv">-</div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Évolution de la valeur</h2>
+        <div class="chart-box"><canvas id="chart"></canvas></div>
+        <div class="legend">
+          <span style="--c: var(--best)">Meilleur trouvé</span>
+          <span style="--c: var(--mean)">Fitness moyenne</span>
+          <span class="dash" style="--c: var(--opt)">Optimum exact</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Population (triée par fitness)</h2>
+        <div class="pop-box"><canvas id="popCanvas"></canvas></div>
+        <p class="hint">Une ligne par individu, une colonne par objet. Case colorée : objet pris. Quand les colonnes deviennent uniformes, la population a convergé.</p>
+      </section>
+
+      <section class="card">
+        <h2>Objets (poids · valeur)</h2>
+        <div class="items" id="items"></div>
+        <p class="hint">Fond bleu : objet dans la meilleure solution trouvée. Trait vert : objet dans la solution optimale.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="card explain">
+    <h2>Comment ça marche</h2>
+    <h3>Le problème</h3>
+    <p>On dispose de <em>n</em> objets, chacun avec un poids et une valeur, et d'un sac de capacité fixe. Il faut choisir un sous-ensemble d'objets dont le poids total ne dépasse pas la capacité et dont la valeur est maximale. Avec <em>n</em> objets, il existe 2<sup>n</sup> combinaisons : pour 40 objets, plus de mille milliards.</p>
+    <h3>Le codage</h3>
+    <p>Chaque solution est un chromosome binaire de <em>n</em> gènes : 1 si l'objet est dans le sac, 0 sinon.</p>
+    <h3>Une génération</h3>
+    <ol>
+      <li><strong>Évaluation</strong> : la fitness est la valeur totale du sac. Un sac trop lourd est soit <em>réparé</em> (on retire les objets au plus mauvais rapport valeur/poids jusqu'à respecter la capacité), soit <em>pénalisé</em> proportionnellement au dépassement.</li>
+      <li><strong>Élitisme</strong> : les meilleurs individus passent directement à la génération suivante, ce qui garantit de ne jamais perdre la meilleure solution.</li>
+      <li><strong>Sélection</strong> : par roulette (réglage du cours), chaque individu a une chance proportionnelle à sa fitness. Par tournoi, on tire quelques individus au hasard et on garde le meilleur : un tournoi plus grand augmente la pression de sélection.</li>
+      <li><strong>Croisement</strong> : deux parents échangent des morceaux de chromosome (à 1 point, 2 points ou gène par gène).</li>
+      <li><strong>Mutation</strong> : chaque gène peut basculer avec une faible probabilité, ce qui maintient la diversité et évite de rester bloqué sur un optimum local.</li>
+    </ol>
+    <h3>La référence exacte</h3>
+    <p>L'optimum affiché est calculé par programmation dynamique en O(n × capacité). C'est possible ici car les poids sont des entiers petits, mais cette méthode devient impraticable quand les poids sont grands ou le problème multi-contraintes : c'est là que les métaheuristiques comme l'AG sont utiles.</p>
+    <h3>À tester</h3>
+    <p>Mettre la mutation à 0 % et voir la diversité s'effondrer. Passer la mutation à 20 % et voir l'AG se comporter comme une recherche aléatoire. Comparer réparation et pénalité. Augmenter la taille du tournoi pour accélérer la convergence au risque de converger trop tôt.</p>
+  </section>
+
+  <footer>Page statique, sans dépendance. Le labo tire ses nombres sans les arrondir : pour suivre les chiffres du cours, utilise le <a href="index.html#simulateur">simulateur du fil rouge</a>.</footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const clampInt = (v, lo, hi, def) => { v = Math.round(Number(v)); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : def; };
+  const clampNum = (v, lo, hi, def) => { v = Number(v); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : def; };
+
+  // ---------- État ----------
+  let items = [], capacity = 0, optValue = 0, optSet = null, repairOrder = [], maxRatio = 1;
+  let rand = Math.random;
+  let pop = [], gen = 0, history = [], bestEver = null, diversity = null;
+  let running = false, timer = null;
+
+  function params() {
+    const n = items.length;
+    return {
+      N: clampInt($("popSize").value, 4, 1000, 60),
+      maxGen: clampInt($("maxGen").value, 1, 5000, 200),
+      pc: clampNum($("pc").value, 0, 100, 85) / 100,
+      pm: clampNum($("pm").value, 0, 50, 2) / 100,
+      elite: clampInt($("elite").value, 0, 50, 2),
+      tourn: clampInt($("tourn").value, 1, 20, 3),
+      selection: $("selection").value,
+      xover: $("xover").value,
+      mode: $("constraint").value,
+      n
+    };
+  }
+
+  // ---------- Problème ----------
+  function newProblem() {
+    const n = clampInt($("nItems").value, 5, 120, 40);
+    const ratio = clampNum($("capRatio").value, 5, 95, 40) / 100;
+    const seed = clampInt($("seed").value, -1e9, 1e9, 42);
+    const r = mulberry32(seed);
+    items = [];
+    for (let i = 0; i < n; i++) {
+      const w = 1 + Math.floor(r() * 30);
+      // valeur corrélée au poids avec du bruit : instances plus intéressantes
+      const v = Math.max(1, Math.round(w * (0.6 + r() * 1.2) + r() * 10));
+      items.push({ w, v });
+    }
+    const totalW = items.reduce((s, it) => s + it.w, 0);
+    capacity = Math.max(1, Math.round(totalW * ratio));
+    repairOrder = items.map((_, i) => i).sort((a, b) => items[a].v / items[a].w - items[b].v / items[b].w);
+    maxRatio = Math.max(...items.map(it => it.v / it.w));
+    solveExact();
+    resetGA();
+  }
+
+  function solveExact() {
+    const n = items.length, C = capacity;
+    const dp = Array.from({ length: n + 1 }, () => new Int32Array(C + 1));
+    for (let i = 1; i <= n; i++) {
+      const { w, v } = items[i - 1];
+      const prev = dp[i - 1], cur = dp[i];
+      for (let c = 0; c <= C; c++) {
+        cur[c] = prev[c];
+        if (c >= w && prev[c - w] + v > cur[c]) cur[c] = prev[c - w] + v;
+      }
+    }
+    optValue = dp[n][C];
+    optSet = new Uint8Array(n);
+    let c = C;
+    for (let i = n; i >= 1; i--) {
+      if (dp[i][c] !== dp[i - 1][c]) { optSet[i - 1] = 1; c -= items[i - 1].w; }
+    }
+  }
+
+  // ---------- AG ----------
+  function makeInd(g, mode) {
+    let w = 0, v = 0;
+    for (let i = 0; i < g.length; i++) if (g[i]) { w += items[i].w; v += items[i].v; }
+    if (w > capacity && mode === "repair") {
+      for (const i of repairOrder) {
+        if (g[i]) { g[i] = 0; w -= items[i].w; v -= items[i].v; if (w <= capacity) break; }
+      }
+    }
+    const f = w <= capacity ? v : Math.max(0, v - maxRatio * 1.5 * (w - capacity));
+    return { g, w, v, f };
+  }
+
+  function resetGA() {
+    stop();
+    const seed = clampInt($("seed").value, -1e9, 1e9, 42);
+    rand = mulberry32(seed * 7919 + 1);
+    const P = params();
+    const totalW = items.reduce((s, it) => s + it.w, 0);
+    const p = Math.min(0.5, capacity / totalW);
+    pop = [];
+    for (let k = 0; k < P.N; k++) {
+      const g = new Uint8Array(P.n);
+      for (let i = 0; i < P.n; i++) g[i] = rand() < p ? 1 : 0;
+      pop.push(makeInd(g, P.mode));
+    }
+    gen = 0; history = []; bestEver = null;
+    record();
+    render();
+  }
+
+  function selectionner(P) {
+    if (P.selection === "tournoi") return tournament(P.tourn);
+    const total = pop.reduce((t, x) => t + x.f, 0);
+    if (total <= 0) return pop[Math.floor(rand() * pop.length)];
+    let r = rand() * total;
+    for (const x of pop) { r -= x.f; if (r < 0) return x; }
+    return pop[pop.length - 1];
+  }
+
+  function tournament(k) {
+    let best = pop[Math.floor(rand() * pop.length)];
+    for (let i = 1; i < k; i++) {
+      const c = pop[Math.floor(rand() * pop.length)];
+      if (c.f > best.f) best = c;
+    }
+    return best;
+  }
+
+  function crossover(a, b, type) {
+    const n = a.length;
+    if (type === "u") {
+      for (let i = 0; i < n; i++) if (rand() < 0.5) { const t = a[i]; a[i] = b[i]; b[i] = t; }
+      return;
+    }
+    let p1 = 1 + Math.floor(rand() * (n - 1)), p2 = n;
+    if (type === "2") {
+      p2 = 1 + Math.floor(rand() * (n - 1));
+      if (p2 < p1) { const t = p1; p1 = p2; p2 = t; }
+    }
+    for (let i = p1; i < p2; i++) { const t = a[i]; a[i] = b[i]; b[i] = t; }
+  }
+
+  function mutate(g, pm) {
+    for (let i = 0; i < g.length; i++) if (rand() < pm) g[i] ^= 1;
+  }
+
+  function step() {
+    const P = params();
+    const sorted = pop.slice().sort((a, b) => b.f - a.f);
+    const next = [];
+    for (let i = 0; i < Math.min(P.elite, P.N, sorted.length); i++) {
+      next.push(makeInd(sorted[i].g.slice(), P.mode));
+    }
+    while (next.length < P.N) {
+      const c1 = selectionner(P).g.slice();
+      const c2 = selectionner(P).g.slice();
+      if (rand() < P.pc) crossover(c1, c2, P.xover);
+      mutate(c1, P.pm); mutate(c2, P.pm);
+      next.push(makeInd(c1, P.mode));
+      if (next.length < P.N) next.push(makeInd(c2, P.mode));
+    }
+    pop = next;
+    gen++;
+    record();
+  }
+
+  function record() {
+    let sumF = 0, genBest = null;
+    for (const ind of pop) {
+      sumF += ind.f;
+      if (ind.w <= capacity && (!genBest || ind.v > genBest.v)) genBest = ind;
+    }
+    if (genBest && (!bestEver || genBest.v > bestEver.v)) {
+      bestEver = { g: genBest.g.slice(), w: genBest.w, v: genBest.v, gen };
+    }
+    const n = items.length;
+    let d = 0;
+    for (let i = 0; i < n; i++) {
+      let ones = 0;
+      for (const ind of pop) ones += ind.g[i];
+      const p = ones / pop.length;
+      d += 4 * p * (1 - p);
+    }
+    diversity = n ? d / n : 0;
+    history.push({ best: bestEver ? bestEver.v : 0, mean: sumF / pop.length });
+  }
+
+  // ---------- Boucle ----------
+  const SPEEDS = [null, { delay: 250, k: 1 }, { delay: 90, k: 1 }, { delay: 30, k: 1 }, { delay: 0, k: 2 }, { delay: 0, k: 10 }];
+
+  function loop() {
+    if (!running) return;
+    const P = params();
+    const sp = SPEEDS[clampInt($("speed").value, 1, 5, 3)];
+    for (let i = 0; i < sp.k && gen < P.maxGen; i++) step();
+    render();
+    if (gen >= P.maxGen) { stop(); return; }
+    timer = sp.delay ? setTimeout(loop, sp.delay) : requestAnimationFrame(loop);
+  }
+  function start() {
+    if (gen >= params().maxGen) resetGA();
+    running = true;
+    $("btnRun").textContent = "Pause";
+    $("btnStep").disabled = true;
+    loop();
+  }
+  function stop() {
+    running = false;
+    clearTimeout(timer); cancelAnimationFrame(timer);
+    $("btnRun").textContent = "Lancer";
+    $("btnStep").disabled = false;
+  }
+
+  // ---------- Rendu ----------
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  function setupCanvas(cv) {
+    const r = cv.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const W = Math.max(1, Math.round(r.width)), H = Math.max(1, Math.round(r.height));
+    if (cv.width !== W * dpr || cv.height !== H * dpr) { cv.width = W * dpr; cv.height = H * dpr; }
+    const ctx = cv.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    return { ctx, W, H };
+  }
+
+  function drawChart() {
+    const { ctx, W, H } = setupCanvas($("chart"));
+    const padL = 48, padR = 12, padT = 10, padB = 28;
+    const pw = W - padL - padR, ph = H - padT - padB;
+    const maxGen = Math.max(params().maxGen, history.length - 1, 1);
+    const yMax = Math.max(optValue, ...history.map(h => Math.max(h.best, h.mean)), 1) * 1.05;
+    const x = g => padL + (g / maxGen) * pw;
+    const y = v => padT + ph - (v / yMax) * ph;
+
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = css("--muted");
+    ctx.strokeStyle = css("--border");
+    ctx.lineWidth = 1;
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (let i = 0; i <= 4; i++) {
+      const v = (yMax / 4) * i, yy = Math.round(y(v)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(padL, yy); ctx.lineTo(W - padR, yy); ctx.stroke();
+      ctx.fillText(Math.round(v), padL - 6, yy);
+    }
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (let i = 0; i <= 4; i++) {
+      const g = Math.round((maxGen / 4) * i);
+      ctx.fillText(g, x(g), H - padB + 8);
+    }
+
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = css("--opt"); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(padL, y(optValue)); ctx.lineTo(W - padR, y(optValue)); ctx.stroke();
+    ctx.setLineDash([]);
+
+    const line = (key, color) => {
+      if (!history.length) return;
+      ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = "round";
+      ctx.beginPath();
+      history.forEach((h, g) => g ? ctx.lineTo(x(g), y(h[key])) : ctx.moveTo(x(g), y(h[key])));
+      ctx.stroke();
+    };
+    line("mean", css("--mean"));
+    line("best", css("--best"));
+  }
+
+  function drawPop() {
+    const { ctx, W, H } = setupCanvas($("popCanvas"));
+    const n = items.length;
+    const sorted = pop.slice().sort((a, b) => b.f - a.f);
+    const rows = Math.min(sorted.length, 120);
+    const cw = W / n, rh = H / rows;
+    const on = css("--accent"), off = css("--cell-off"), bad = css("--danger");
+    for (let r = 0; r < rows; r++) {
+      const ind = sorted[r];
+      const over = ind.w > capacity;
+      for (let i = 0; i < n; i++) {
+        ctx.fillStyle = ind.g[i] ? (over ? bad : on) : off;
+        ctx.fillRect(i * cw, r * rh, Math.max(1, cw - (cw > 4 ? 1 : 0)), Math.max(1, rh - (rh > 4 ? 1 : 0)));
+      }
+    }
+  }
+
+  function renderItems() {
+    const box = $("items");
+    if (box.childElementCount !== items.length) {
+      box.innerHTML = items.map((it, i) =>
+        `<div class="item" id="it${i}">#${i + 1}<br><b>${it.w}</b> kg · <b>${it.v}</b> €</div>`).join("");
+    }
+    items.forEach((_, i) => {
+      const el = $("it" + i);
+      el.classList.toggle("sel", !!(bestEver && bestEver.g[i]));
+      el.classList.toggle("opt", !!optSet[i]);
+    });
+  }
+
+  function render() {
+    const P = params();
+    $("sGen").textContent = `${gen} / ${P.maxGen}`;
+    const bv = bestEver ? bestEver.v : 0;
+    $("sBest").textContent = bv;
+    $("sOpt").textContent = optValue;
+    const gap = optValue ? (100 * (optValue - bv)) / optValue : 0;
+    const sg = $("sGap");
+    sg.textContent = bestEver ? (gap <= 0 ? `0 % (gén. ${bestEver.gen})` : gap.toFixed(2) + " %") : "-";
+    sg.classList.toggle("ok", !!bestEver && gap <= 0);
+    $("sWeight").textContent = `${bestEver ? bestEver.w : 0} / ${capacity}`;
+    $("sDiv").textContent = diversity == null ? "-" : Math.round(diversity * 100) + " %";
+    drawChart();
+    drawPop();
+    renderItems();
+  }
+
+  // ---------- Événements ----------
+  $("btnRun").addEventListener("click", () => running ? stop() : start());
+  $("btnStep").addEventListener("click", () => { if (gen < params().maxGen) { step(); render(); } });
+  $("btnReset").addEventListener("click", resetGA);
+  $("btnNew").addEventListener("click", newProblem);
+  ["nItems", "capRatio", "seed"].forEach(id => $(id).addEventListener("change", newProblem));
+  ["popSize", "constraint"].forEach(id => $(id).addEventListener("change", resetGA));
+  $("maxGen").addEventListener("change", render);
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 100); });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+
+  newProblem();
+})();
+</script>
+</body>
+</html>
