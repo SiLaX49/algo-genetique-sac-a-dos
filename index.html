@@ -16,7 +16,7 @@
 </header>
 </div>
 <nav class="som"><div>
-  <a href="#probleme">Problème</a><a href="#phases">Les phases</a><a href="#cycle">Un cycle à la main</a><a href="#simulateur">Simulateur</a><a href="#bilan">Bilan</a><a href="#exercice">Exercice</a><a href="#refs">Références</a><a href="labo.html">Labo</a>
+  <a href="#probleme">Problème</a><a href="#phases">Les phases</a><a href="#cycle">Un cycle à la main</a><a href="#animation">Animation</a><a href="#simulateur">Simulateur</a><a href="#bilan">Bilan</a><a href="#exercice">Exercice</a><a href="#auto-eval">Quiz</a><a href="#refs">Références</a><a href="labo.html">Labo</a>
 </div></nav>
 <main class="wrap">
 
@@ -103,6 +103,22 @@ RENVOYER le meilleur chromosome rencontré</pre>
   <p id="txtFin"></p>
 </section>
 
+<section id="animation">
+  <h2>Croisement et mutation au ralenti</h2>
+  <p>Le tableau du cycle donne tout d'un coup. Ici, on rejoue un couple du cycle 1 étape par étape, avec les mêmes tirages. Le trait sous chaque gène indique son parent d'origine : orange pour le parent 1, vert pour le parent 2. Une case entourée a muté, une case barrée est retirée par la réparation.</p>
+  <div class="card">
+    <div class="btns" id="anCouples" role="group" aria-label="Choix du couple"></div>
+    <p id="anEtape" aria-live="polite"></p>
+    <p id="anTexte" class="note"></p>
+    <div id="anVue"></div>
+    <div class="btns">
+      <button id="anPrec" type="button">Étape précédente</button>
+      <button id="anSuiv" type="button" class="p">Étape suivante</button>
+    </div>
+  </div>
+  <p class="note">Le couple 1 ne croise pas (tirage ≥ 0,8), mais c'est lui qui montre une mutation suivie d'une réparation. Le couple 2 montre le croisement le plus parlant.</p>
+</section>
+
 <section id="simulateur">
   <h2>Simulateur du fil rouge</h2>
   <p>Avec les réglages par défaut, il rejoue exactement le cycle ci-dessus, puis la suite jusqu'à l'arrêt. Change la graine ou le taux de mutation pour voir ce qui bouge.</p>
@@ -155,6 +171,14 @@ RENVOYER le meilleur chromosome rencontré</pre>
   <details><summary>Voir la correction</summary><div id="exoCorr"></div></details>
 </section>
 
+<section id="auto-eval">
+  <h2>Quiz : est-ce que j'ai compris ?</h2>
+  <p>Huit questions sur le fil rouge, avec les vrais chiffres du cycle 1. Clique sur une réponse pour voir la correction. Rien n'est enregistré, c'est juste pour toi.</p>
+  <div id="quiz"></div>
+  <div class="btns"><button id="quizReset" type="button">Recommencer</button></div>
+  <p id="quizScore" class="note" aria-live="polite"></p>
+</section>
+
 <section id="refs">
   <h2>Références</h2>
   <ul>
@@ -171,5 +195,6 @@ RENVOYER le meilleur chromosome rencontré</pre>
 <script src="js/ag.js"></script>
 <script src="js/donnees.js"></script>
 <script src="js/site.js"></script>
+<script src="js/interactif.js"></script>
 </body>
 </html>

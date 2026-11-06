@@ -4,7 +4,7 @@ Support de cours alternatif du sujet 7 (programmation linéaire avancée, IRA4 E
 
 **Site :** https://silax49.github.io/algo-genetique-sac-a-dos/
 
-- `index.html`, `style.css`, `js/` : le cours et le simulateur du fil rouge (graine 1814).
+- `index.html`, `style.css`, `js/` : le cours, le simulateur du fil rouge (graine 1814), l'animation pas à pas d'un couple et le quiz (`js/interactif.js`).
 - `labo.html` : grandes instances et alternatives (tournoi, pénalité, 2 points, uniforme).
 - `cours-word/` : support Word daté et script qui le génère.
 - `verification/` : recalcul indépendant en Python et tests du site.

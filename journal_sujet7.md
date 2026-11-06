@@ -30,3 +30,23 @@
 - Références (Holland, Goldberg, Kellerer et al.) citées de mémoire, à contrôler avant dépôt.
 
 **Pour la suite** : quiz, animation du croisement, mini-défi « bats l'algo », fiche mémo, page pièges. Semaine paire : passe humaniser.
+
+## 06/11/2026 (second passage, test de la tâche planifiée) : semaine ISO 45, humaniser : non (semaine impaire)
+
+**Contexte** : la PR de la semaine 45 (SiLaX49/algo-genetique-sac-a-dos#1) est fusionnée et le site est en ligne. Ce passage sert aussi à tester la nouvelle tâche planifiée du jeudi 11h45, qui travaille sur une branche et ouvre une PR.
+
+**Site**
+- Nouvelle section « Croisement et mutation au ralenti » (`#animation`) : on rejoue un couple du cycle 1, au choix, en 4 ou 5 étapes (parents, test de croisement, échange des queues, mutation, réparation). Un trait coloré sous chaque gène montre son parent d'origine.
+- Nouvelle section « Quiz » (`#auto-eval`) : 8 questions avec correction rédigée (probabilité de roulette, choix d'un parent, test pc, point de coupure, réparation, élitisme, rôle de la mutation, sens du critère d'arrêt). Les chiffres viennent du moteur, rien n'est écrit en dur.
+- Code dans `js/interactif.js`, liens ajoutés au sommaire.
+
+**Word** : pas de nouvelle version. La v2026-11-06 date d'aujourd'hui, et une nouvelle version porterait le même nom. Les deux ajouts sont propres au site.
+
+**Vérification**
+- `verifier.py`, `verifier_docx.py` : OK, données inchangées.
+- `test_site.js` étendu : pour chacun des 3 couples, la dernière étape de l'animation affiche les enfants finaux du moteur ; le quiz a 8 questions, 8 / 8 avec les bonnes réponses, correction de la question 1 = 34 / 146 = 23,3 %. Aucune erreur JavaScript, pas de débordement à 390 px.
+- Aucune erreur trouvée dans les calculs.
+
+**À valider par le groupe ou le prof** : les points de l'entrée précédente restent ouverts (choix N = 6 et pm = 0,10, outil en ligne exact, références citées de mémoire, noms du groupe, fiche IA).
+
+**Pour la suite** : mini-défi « bats l'algo », fiche mémo imprimable, page pièges fréquents. Prochain passage le 12/11 (semaine 46, paire) : humaniser.
