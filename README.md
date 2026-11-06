@@ -1,18 +1,19 @@
-# Algorithme génétique : problème du sac à dos
+# Algorithme génétique : problème du sac à dos binaire
 
-Simulation interactive d'un algorithme génétique qui résout le problème du sac à dos 0/1.
+Support de cours alternatif du sujet 7 (programmation linéaire avancée, IRA4 ESAIP).
 
-**Démo en ligne :** https://silax49.github.io/algo-genetique-sac-a-dos/
+**Site :** https://silax49.github.io/algo-genetique-sac-a-dos/
 
-## Fonctionnalités
+- `index.html`, `style.css`, `js/` : le cours et le simulateur du fil rouge (graine 1814).
+- `labo.html` : grandes instances et alternatives (tournoi, pénalité, 2 points, uniforme).
+- `cours-word/` : support Word daté et script qui le génère.
+- `verification/` : recalcul indépendant en Python et tests du site.
+- `journal_sujet7.md` : suivi semaine par semaine.
 
-- Génération d'instances aléatoires reproductibles (graine)
-- Paramètres réglables : taille de population, générations, croisement (1 point, 2 points, uniforme), mutation, élitisme, taille du tournoi
-- Gestion de la contrainte de poids par réparation gloutonne ou par pénalité
-- Courbe de la meilleure valeur et de la fitness moyenne par génération
-- Visualisation de la population et de sa diversité génétique
-- Comparaison avec l'optimum exact calculé par programmation dynamique
+## Vérifier les calculs
 
-## Lancer en local
+    node verification/generer.js
+    python3 verification/verifier.py
+    python3 verification/verifier_docx.py cours-word/sujet7_cours_v2026-11-06.docx
 
-Aucune dépendance : ouvrir `index.html` dans un navigateur.
+Aucune dépendance pour le site : ouvrir `index.html` via un petit serveur local ou GitHub Pages.
