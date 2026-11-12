@@ -57,5 +57,8 @@ button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-s
 .qz{padding:12px 14px}.qz-q{margin:0 0 6px}.qz-e{margin:8px 0 0;font-size:.92rem}
 button.bon{border-color:var(--vert);box-shadow:inset 0 0 0 1px var(--vert)}button.faux{border-color:var(--accent);text-decoration:line-through}
 button:disabled{cursor:default}
+.df-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:10px}
+.df-o{text-align:left;display:flex;flex-direction:column;gap:2px}.df-pv{font-size:.8rem;color:var(--muted)}
+.df-trop{color:var(--accent)}#dfMsg{min-height:3em}
 @media print{#animation .btns,#quiz .btns button:not(.bon){display:none}
 nav.som,#simulateur .btns,#simulateur .reg{display:none}details{border:0}details>*{display:block}}
