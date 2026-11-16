@@ -12,11 +12,11 @@
 <header class="hero">
   <p class="sur">Programmation linéaire avancée, IRA4 ESAIP, classe renversée, sujet 7</p>
   <h1>Quand 16 kg décident de tout : un algorithme génétique pour charger un drone de secours</h1>
-  <p class="acc">Un randonneur est bloqué en montagne. Le drone n'emporte que 16 kg et sept équipements attendent sur la dalle. Lesquels charger ? On va laisser des solutions se reproduire entre elles jusqu'à trouver la bonne, avec des 0, des 1 et un peu de hasard.</p>
+  <p class="acc">Un randonneur est bloqué en montagne. Le drone n'emporte que 16 kg et sept équipements attendent sur la dalle. Lesquels charger ? On écrit chaque chargement possible en 0 et en 1, puis on laisse ces solutions se croiser et muter pendant quelques générations.</p>
 </header>
 </div>
 <nav class="som"><div>
-  <a href="#probleme">Problème</a><a href="#phases">Les phases</a><a href="#cycle">Un cycle à la main</a><a href="#animation">Animation</a><a href="#simulateur">Simulateur</a><a href="#bilan">Bilan</a><a href="#exercice">Exercice</a><a href="#auto-eval">Quiz</a><a href="#refs">Références</a><a href="labo.html">Labo</a>
+  <a href="#probleme">Problème</a><a href="#phases">Les phases</a><a href="#cycle">Un cycle à la main</a><a href="#animation">Animation</a><a href="#simulateur">Simulateur</a><a href="#defi">Défi</a><a href="#bilan">Bilan</a><a href="#exercice">Exercice</a><a href="#auto-eval">Quiz</a><a href="#refs">Références</a><a href="labo.html">Labo</a>
 </div></nav>
 <main class="wrap">
 
@@ -27,14 +27,14 @@
 s.c. 5x_A + 3x_B + 2x_C + 6x_D + 1x_E + 4x_F + 7x_G ≤ 16
      x_i ∈ {0, 1}</pre>
   <div class="tab" id="tObjets"></div>
-  <p>Avec 7 objets, on a 2<sup>7</sup> = 128 chargements possibles, dont <b id="nbReal"></b> respectent les 16 kg. On pourrait tout tester. À 60 objets, il y a plus de 10<sup>18</sup> combinaisons, et c'est là que les métaheuristiques comme l'algorithme génétique prennent leur intérêt. Le petit exemple sert à voir chaque calcul et à vérifier le résultat.</p>
+  <p>Avec 7 objets, on a 2<sup>7</sup> = 128 chargements possibles, dont <b id="nbReal"></b> respectent les 16 kg. Ici, on peut encore tout tester. À 60 objets, on passe à plus de 10<sup>18</sup> combinaisons, et une métaheuristique comme l'algorithme génétique devient utile. Le petit exemple permet de suivre chaque calcul et de vérifier le résultat par énumération.</p>
   <h3>Le codage génétique</h3>
   <p>Une solution est un <b>chromosome</b> : une chaîne de 7 bits, un <b>gène</b> par objet, dans l'ordre A à G. 1 veut dire « l'objet est pris ». Exemple : <span class="chrom" data-g="1100000"></span> = trousse + radio, soit 8 kg et 21 points. Une <b>population</b> est un ensemble de chromosomes, et la <b>fitness</b> mesure la qualité de chacun.</p>
 </section>
 
 <section id="phases">
   <h2>Les phases, et pourquoi ces choix</h2>
-  <p>Il existe des dizaines de variantes. Nous en avons fixé une seule, gardée partout : ce site, le support Word et les exercices. Ouvre chaque phase pour voir le choix et les alternatives.</p>
+  <p>Il existe des dizaines de variantes. Nous en avons fixé une, la même sur ce site, dans le support Word et dans les exercices. Chaque phase s'ouvre sur notre choix, la raison de ce choix et les alternatives.</p>
   <pre class="algo">t ← 0 ; stagnation ← 0
 P ← N chromosomes aléatoires, réparés et évalués
 TANT QUE t &lt; Gmax ET stagnation &lt; Smax
@@ -82,7 +82,7 @@ RENVOYER le meilleur chromosome rencontré</pre>
     <p><span class="choix">Choix :</span> on continue tant que t &lt; 30 et que le record a été battu il y a moins de 10 générations. Deux raisons de s'arrêter : budget épuisé ou stagnation. On renvoie le meilleur chromosome vu depuis le début.</p>
     <p><span class="choix">Pourquoi :</span> Gmax garantit que l'algorithme se termine, et Smax évite de calculer dans le vide.</p>
     <ul><li>Valeur cible : arrêt immédiat quand on l'atteint, mais on connaît rarement l'optimum.</li><li>Diversité minimale : arrêt quand la population a convergé, mais c'est un calcul de plus.</li></ul>
-    <p class="note">Un algorithme génétique ne prouve jamais qu'il a trouvé l'optimum : l'arrêt ne veut pas dire « c'est la meilleure solution », seulement « on ne progresse plus ».</p>
+    <p class="note">Quand l'algorithme s'arrête, on sait seulement que le record n'a pas bougé depuis Smax générations. Un algorithme génétique ne prouve jamais qu'il tient l'optimum.</p>
   </details>
 </section>
 
@@ -116,7 +116,7 @@ RENVOYER le meilleur chromosome rencontré</pre>
       <button id="anSuiv" type="button" class="p">Étape suivante</button>
     </div>
   </div>
-  <p class="note">Le couple 1 ne croise pas (tirage ≥ 0,8), mais c'est lui qui montre une mutation suivie d'une réparation. Le couple 2 montre le croisement le plus parlant.</p>
+  <p class="note">Le couple 1 ne croise pas (tirage ≥ 0,8), mais son premier enfant mute deux fois puis passe par la réparation. Le couple 2 montre un croisement au point 5.</p>
 </section>
 
 <section id="simulateur">
@@ -152,12 +152,30 @@ RENVOYER le meilleur chromosome rencontré</pre>
   <p class="note">Tu veux des instances plus grosses et les alternatives (tournoi, pénalité, 2 points) ? Passe par le <a href="labo.html">labo</a>.</p>
 </section>
 
+<section id="defi">
+  <h2>Défi : charge le drone mieux que l'algorithme</h2>
+  <p id="dfRef"></p>
+  <p>Clique sur un objet pour le mettre dans le sac ou l'en sortir. Le chromosome se construit en même temps, gène par gène, dans l'ordre A à G.</p>
+  <div class="card">
+    <div class="df-grille" id="dfObjets" role="group" aria-label="Objets à charger"></div>
+    <div class="stats">
+      <div class="stat"><b id="dfChrom"></b><span>chromosome</span></div>
+      <div class="stat"><b id="dfPoids"></b><span>poids</span></div>
+      <div class="stat"><b id="dfVal"></b><span>utilité</span></div>
+    </div>
+    <p id="dfMsg" aria-live="polite"></p>
+    <div class="btns"><button id="dfVider" type="button">Vider le sac</button></div>
+    <p id="dfScore" class="note"></p>
+  </div>
+  <p class="note">Avec 7 objets, on trouve l'optimum à la main en quelques essais. À 60 objets, il y aurait plus de 10<sup>18</sup> sacs possibles, et c'est pour ce cas que l'algorithme génétique existe.</p>
+</section>
+
 <section id="bilan">
   <h2>Bilan : qui gagne ?</h2>
   <div class="tab" id="tBilan"></div>
-  <p>Le glouton prend les objets par rapport utilité/poids décroissant : E, A, D, B. Il tombe à 15 kg et le dernier kilo ne sert à rien. L'algorithme génétique trouve mieux en remplaçant l'eau par l'oxygène, ce que le tri par rapport ne voit pas. Attention, ce résultat dépend de la graine : avec nos réglages, 620 graines sur 1000 (graines 1 à 1000) atteignent 40, les autres s'arrêtent avant. Six individus, c'est peu, et le simulateur permet de le constater.</p>
+  <p>Le glouton prend les objets par rapport utilité/poids décroissant : E, A, D, B. Il tombe à 15 kg et le dernier kilo ne sert à rien. L'algorithme génétique trouve mieux en remplaçant l'eau par l'oxygène, ce que le tri par rapport ne voit pas. Ce résultat dépend de la graine : avec nos réglages, 620 graines sur 1000 (graines 1 à 1000) atteignent 40. Avec la même méthode de comptage, N = 10 en donne 763 et N = 20 en donne 940. Le simulateur permet de changer N et la graine pour le constater.</p>
   <h3>Vérification avec un outil en ligne</h3>
-  <p>L'outil <a href="https://web-apps.thecoatlessprofessor.com/optimization/knapsack-app/" target="_blank" rel="noopener">0/1 Knapsack Problem Solver</a> résout le problème par programmation dynamique, avec un mode pas à pas. Saisis une capacité de 16 et les 7 couples (poids, valeur). Il confirme 40 avec les objets 1, 2, 5 et 7, soit A, B, E et G. C'est une méthode exacte : elle sert de juge de paix, elle ne simule pas l'algorithme génétique.</p>
+  <p>L'outil <a href="https://web-apps.thecoatlessprofessor.com/optimization/knapsack-app/" target="_blank" rel="noopener">0/1 Knapsack Problem Solver</a> résout le problème par programmation dynamique, avec un mode pas à pas. Saisis une capacité de 16 et les 7 couples (poids, valeur). Il confirme 40 avec les objets 1, 2, 5 et 7, soit A, B, E et G. Cette méthode exacte sert de référence pour contrôler notre résultat. L'outil ne simule aucun algorithme génétique.</p>
   <figure><img src="images/outil_en_ligne.png" alt="Résultat de l'outil en ligne : valeur maximale 40, poids total 16, objets 1, 2, 5 et 7" loading="lazy" width="900"><figcaption>Capture du 06/11/2026, données du fil rouge.</figcaption></figure>
 </section>
 
@@ -173,7 +191,7 @@ RENVOYER le meilleur chromosome rencontré</pre>
 
 <section id="auto-eval">
   <h2>Quiz : est-ce que j'ai compris ?</h2>
-  <p>Huit questions sur le fil rouge, avec les vrais chiffres du cycle 1. Clique sur une réponse pour voir la correction. Rien n'est enregistré, c'est juste pour toi.</p>
+  <p>Huit questions sur le fil rouge, avec les vrais chiffres du cycle 1. Clique sur une réponse pour voir la correction. Les réponses ne sont enregistrées nulle part.</p>
   <div id="quiz"></div>
   <div class="btns"><button id="quizReset" type="button">Recommencer</button></div>
   <p id="quizScore" class="note" aria-live="polite"></p>
@@ -196,5 +214,6 @@ RENVOYER le meilleur chromosome rencontré</pre>
 <script src="js/donnees.js"></script>
 <script src="js/site.js"></script>
 <script src="js/interactif.js"></script>
+<script src="js/defi.js"></script>
 </body>
 </html>

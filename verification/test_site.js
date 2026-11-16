@@ -37,6 +37,15 @@ const R = require("./resultats.json");
   check((await p.innerText("#quizScore")).includes("8 / 8"), "score du quiz");
   const q1 = await p.innerText("#qz0");
   check(q1.includes("34 / 146 = 23,3 %"), "correction question 1");
+  // Défi : A + B + E + G = 16 kg et 40 points (optimum) ; ajouter D fait déborder
+  for (const i of [0, 1, 4, 6]) await p.click('#dfObjets .df-o[data-i="' + i + '"]');
+  check((await p.innerText("#dfVal")) === "40 pts" && (await p.innerText("#dfPoids")) === "16 / 16 kg", "défi : optimum 40 pts, 16 kg");
+  check((await p.innerText("#dfMsg")).includes("l'optimum"), "défi : message optimum");
+  check((await p.innerText("#dfChrom")).replace(/\s/g, "") === "1100101", "défi : chromosome");
+  await p.click('#dfObjets .df-o[data-i="3"]');
+  check((await p.innerText("#dfMsg")).startsWith("Trop lourd de 6 kg"), "défi : surcharge");
+  await p.click("#dfVider");
+  check((await p.innerText("#dfVal")) === "0 pts", "défi : vider");
   await p.goto("http://localhost:8123/labo.html", { waitUntil: "load" });
   await p.click("#btnStep");
   for (const [w, u] of [[390, "index.html"], [390, "labo.html"]]) {
