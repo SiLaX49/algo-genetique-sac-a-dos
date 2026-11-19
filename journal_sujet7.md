@@ -72,3 +72,21 @@
 **À valider par le groupe ou le prof** : toujours ouverts (choix N = 6 et pm = 0,10, outil en ligne exact, références citées de mémoire, noms du groupe, fiche IA). Le style du Word (titres en couleur, gras) n'a pas été changé : à décider si on veut un rendu plus sobre.
 
 **Pour la suite** : fiche mémo imprimable, page pièges fréquents sur le site. Prochain passage le 19/11 (semaine 47, impaire) : travail de fond.
+
+## 19/11/2026 : semaine ISO 47, humaniser : non (semaine impaire)
+
+**Site**
+- Nouvelle page `memo.html` : fiche mémo imprimable sur une page A4 (problème, réglages, boucle, formules à savoir refaire, résultats du fil rouge, six pièges fréquents). Les chiffres (exemple de chromosome, ordre de réparation, glouton, AG, optimum, nombre de points réalisables) sont calculés par le moteur. Lien « Fiche mémo » ajouté au sommaire du cours.
+
+**Word** : nouvelle version `cours-word/sujet7_cours_v2026-11-19.docx` (les versions du 06/11 et du 12/11 sont conservées).
+- Ajout du lien vers la fiche mémo dans la partie « Outils en ligne ».
+- 7 pages sous LibreOffice : 5 de cours, 2 d'annexe.
+
+**Vérification**
+- `verifier.py` : OK. `verifier_docx.py` sur les trois versions du Word : OK.
+- `test_site.js` étendu à la fiche mémo : tableau des résultats et ordre de réparation identiques au moteur, impression sur exactement 1 page A4, pas de débordement à 390 px (un débordement de 22 px trouvé puis corrigé avant le commit). Aucune erreur JavaScript.
+- Aucune erreur trouvée dans les calculs.
+
+**À valider par le groupe ou le prof** : toujours ouverts (choix N = 6 et pm = 0,10, outil en ligne exact, références citées de mémoire, noms du groupe, fiche IA, style du Word). Il reste moins de trois semaines avant le dépôt Moodle du 08/12.
+
+**Pour la suite** : section « pièges fréquents » interactive sur le site (trouver l'erreur dans un calcul). Prochain passage le 26/11 (semaine 48, paire) : humaniser, dont la fiche mémo.

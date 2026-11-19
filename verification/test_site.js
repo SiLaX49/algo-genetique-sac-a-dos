@@ -46,9 +46,17 @@ const R = require("./resultats.json");
   check((await p.innerText("#dfMsg")).startsWith("Trop lourd de 6 kg"), "défi : surcharge");
   await p.click("#dfVider");
   check((await p.innerText("#dfVal")) === "0 pts", "défi : vider");
+  // Fiche mémo : chiffres du moteur, une seule page A4 à l'impression
+  await p.goto("http://localhost:8123/memo.html", { waitUntil: "load" });
+  const memo = (await p.innerText("#mRes")).replace(/\s/g, "");
+  check(memo.includes("A+B+E+G16" + "40") && memo.includes("39") && memo.includes("génération" + J.meilleur.generation), "mémo : tableau des résultats");
+  check((await p.innerText("#mOrdre")).startsWith("C (1,50), F (1,50), G (2,29)"), "mémo : ordre de réparation");
+  const pdf = await p.pdf({ format: "A4", printBackground: true });
+  const nbPages = (pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length;
+  check(nbPages === 1, "mémo imprimé sur " + nbPages + " page(s)");
   await p.goto("http://localhost:8123/labo.html", { waitUntil: "load" });
   await p.click("#btnStep");
-  for (const [w, u] of [[390, "index.html"], [390, "labo.html"]]) {
+  for (const [w, u] of [[390, "index.html"], [390, "labo.html"], [390, "memo.html"]]) {
     const m = await b.newPage({ viewport: { width: w, height: 800 } });
     m.on("pageerror", e => check(false, "JS mobile " + e.message));
     await m.goto("http://localhost:8123/" + u, { waitUntil: "load" });

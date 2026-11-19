@@ -113,6 +113,7 @@ const corps = [
   leg("Figure 2 : l'outil en ligne appliqué au fil rouge (capture du 06/11/2026)."),
   new Paragraph({ spacing: { after: 90 }, children: [t("Notre simulateur : "), lien(SITE + "#simulateur", SITE + "#simulateur"), t(". Le bouton « Rejouer le fil rouge » redonne exactement les chiffres ci-dessus, génération par génération. Changer la graine ou pm montre l'effet des réglages.")] }),
   P("Le site propose aussi trois outils interactifs : un couple du cycle 1 rejoué étape par étape (croisement, mutation, réparation), un quiz corrigé de 8 questions et un défi où l'on compose son propre chargement pour battre le glouton."),
+  new Paragraph({ spacing: { after: 90 }, children: [t("Fiche mémo d'une page A4, à imprimer pour le monitorat : "), lien(SITE + "memo.html", SITE + "memo.html"), t(". Elle reprend les réglages, les formules à savoir refaire, les résultats du fil rouge et les pièges fréquents.")] }),
   img("simulateur_court.png", 340, 264, "Simulateur du site à la génération 7"),
   leg("Figure 3 : le simulateur à la génération 7, où le record de 40 apparaît."),
   H1("8. Pièges fréquents"),

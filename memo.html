@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiche mémo AG</title>
+<meta name="description" content="Fiche mémo imprimable : algorithme génétique sur le sac à dos binaire (ESAIP, IRA4, sujet 7).">
+<link rel="stylesheet" href="style.css">
+<style>
+.memo{max-width:900px;margin:0 auto;padding:20px 16px 40px}
+.memo h1{font-size:1.5rem;margin:0 0 4px}
+.memo .sous{color:var(--muted);font-size:.85rem;margin:0 0 14px}
+.memo h2{font-size:1.02rem;margin:14px 0 6px;color:var(--accent)}
+.memo .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 22px}.memo .cols>div{min-width:0}.memo pre.algo{white-space:pre-wrap}
+@media (max-width:700px){.memo .cols{grid-template-columns:1fr}}
+.memo ul{margin:4px 0;padding-left:18px}.memo li{margin:2px 0}
+.memo table{font-size:.85rem}.memo td,.memo th{padding:4px 7px;white-space:normal}
+.memo pre.algo{font-size:.78rem;margin:6px 0}
+.memo .barre{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+@media print{
+  @page{size:A4;margin:11mm}
+  body{background:#fff;color:#000;font-size:10.5px;line-height:1.35}
+  .memo{padding:0;max-width:none}.memo .barre{display:none}
+  .memo h1{font-size:16px}.memo h2{font-size:12px;margin:8px 0 3px;color:#000}
+  .memo .cols{grid-template-columns:1fr 1fr;gap:0 14px}
+  .memo table{font-size:9.5px}.memo pre.algo{font-size:8.5px;background:#f2f2f2;padding:6px 8px}
+  .chrom i{width:1.2em;height:1.35em}
+  a{color:#000;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<main class="memo">
+  <div class="barre"><a href="index.html">← Retour au cours</a><button type="button" class="p" onclick="window.print()">Imprimer la fiche</button></div>
+  <h1>Fiche mémo : algorithme génétique et sac à dos binaire</h1>
+  <p class="sous">Sujet 7, IRA4 ESAIP. Une page A4 recto à garder pour le monitorat et l'évaluation. Site : https://silax49.github.io/algo-genetique-sac-a-dos/</p>
+
+  <div class="cols">
+  <div>
+    <h2>Le problème</h2>
+    <pre class="algo">max  Σ vᵢ xᵢ
+s.c. Σ pᵢ xᵢ ≤ C,   xᵢ ∈ {0, 1}</pre>
+    <p>Un <b>chromosome</b> = une chaîne de n bits, un gène par objet, 1 = objet pris. Exemple du fil rouge : <span id="mEx"></span>.</p>
+
+    <h2>Les réglages du cours</h2>
+    <div class="tab"><table id="mReg"></table></div>
+
+    <h2>La boucle</h2>
+    <pre class="algo">t ← 0 ; stagnation ← 0
+P ← N chromosomes aléatoires, réparés, évalués
+TANT QUE t &lt; Gmax ET stagnation &lt; Smax
+    roulette ; N/2 couples
+    croisement (pc), mutation (pm), réparation
+    élitisme ; t ← t + 1 ; mise à jour stagnation
+RENVOYER le meilleur chromosome rencontré</pre>
+  </div>
+  <div>
+    <h2>Les formules à savoir refaire</h2>
+    <ul>
+      <li><b>Fitness</b> : f = Σ vᵢ xᵢ, calculée après réparation.</li>
+      <li><b>Réparation</b> : tant que le poids dépasse C, retirer l'objet pris de plus petit rapport v/p (lettre la plus basse en cas d'égalité). Ordre du fil rouge : <span id="mOrdre"></span>.</li>
+      <li><b>Roulette</b> : Pᵢ = fᵢ / Σf ; on prend le premier individu dont le cumul est strictement supérieur au tirage.</li>
+      <li><b>Croisement</b> : si r &lt; pc, point = ⌊r × (n − 1)⌋ + 1 et on échange les queues.</li>
+      <li><b>Mutation</b> : chaque gène bascule si son tirage est &lt; pm.</li>
+      <li><b>Élitisme</b> : si le meilleur parent bat strictement le meilleur enfant, il remplace le pire enfant.</li>
+      <li><b>Arrêt</b> : t = Gmax ou Smax générations sans nouveau record.</li>
+    </ul>
+
+    <h2>Le fil rouge en chiffres</h2>
+    <div class="tab"><table id="mRes"></table></div>
+
+    <h2>Pièges fréquents</h2>
+    <ul>
+      <li>Oublier de réparer après la mutation : le sac peut redevenir trop lourd.</li>
+      <li>Calculer la roulette sur les poids, ou sur les fitness d'avant réparation.</li>
+      <li>Confondre pc (un tirage par couple) et pm (un tirage par gène).</li>
+      <li>Retirer l'objet le plus lourd au lieu de celui de plus petit rapport v/p.</li>
+      <li>Lire « tirage ≤ cumul » au lieu de « tirage &lt; cumul » dans la roulette.</li>
+      <li>Conclure à l'optimum parce que l'algorithme s'est arrêté.</li>
+    </ul>
+  </div>
+  </div>
+</main>
+<script src="js/ag.js"></script>
+<script src="js/donnees.js"></script>
+<script>
+(function () {
+  "use strict";
+  const { FIL_ROUGE: PB, REGLAGES: R } = DONNEES;
+  const $ = id => document.getElementById(id);
+  const virg = (x, d) => x.toFixed(d).replace(".", ",");
+  const chrom = g => '<span class="chrom">' + g.map(b => "<i" + (b ? ' class="u"' : "") + ">" + b + "</i>").join("") + "</span>";
+  const sac = g => PB.objets.filter((_, i) => g[i]).map(o => o.id).join(" + ");
+  const run = AG.executer(PB, R), gl = AG.glouton(PB), ex = AG.exact(PB);
+  const g0 = [1, 1, 0, 0, 0, 0, 0], pv0 = AG.poidsValeur(g0, PB.objets);
+  $("mEx").innerHTML = chrom(g0) + " = " + sac(g0) + ", " + pv0.p + " kg, utilité " + pv0.v;
+  $("mOrdre").textContent = AG.ordreReparation(PB.objets).map(i => PB.objets[i].id + " (" + virg(PB.objets[i].v / PB.objets[i].p, 2) + ")").join(", ");
+  const lignes = [
+    ["Population", "N = " + R.N + " (pair : 2 enfants par couple)"],
+    ["Initialisation", "gène = 1 si tirage &lt; 0,5 ; espace {0,1}<sup>" + PB.objets.length + "</sup> = " + ex.total + " points, " + ex.realisables + " réalisables"],
+    ["Contrainte", "réparation (capacité C = " + PB.C + " kg)"],
+    ["Sélection", "roulette"],
+    ["Croisement", "1 point, pc = " + virg(R.pc, 1)],
+    ["Mutation", "inversion de bit, pm = " + virg(R.pm, 2)],
+    ["Remplacement", "générationnel + élitisme"],
+    ["Arrêt", "Gmax = " + R.Gmax + ", Smax = " + R.Smax + ", graine " + R.graine]
+  ];
+  $("mReg").innerHTML = "<tbody>" + lignes.map(l => "<tr><th>" + l[0] + "</th><td>" + l[1] + "</td></tr>").join("") + "</tbody>";
+  const res = [
+    ["Glouton (v/p décroissant)", chrom(gl.g), sac(gl.g), gl.p, gl.f],
+    ["AG, génération " + run.meilleur.generation + " (arrêt t = " + (run.generations.length - 1) + ")", chrom(run.meilleur.g), sac(run.meilleur.g), run.meilleur.p, run.meilleur.f],
+    ["Optimum (énumération)", chrom(ex.g), sac(ex.g), ex.p, ex.f]
+  ];
+  $("mRes").innerHTML = "<thead><tr><th>Méthode</th><th>Chromosome</th><th>Objets</th><th>kg</th><th>Utilité</th></tr></thead><tbody>" +
+    res.map(l => "<tr>" + l.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("") + "</tbody>";
+  window.__MEMO = { run, gl, ex };
+})();
+</script>
+</body>
+</html>
