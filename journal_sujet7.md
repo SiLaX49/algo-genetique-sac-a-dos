@@ -90,3 +90,23 @@
 **À valider par le groupe ou le prof** : toujours ouverts (choix N = 6 et pm = 0,10, outil en ligne exact, références citées de mémoire, noms du groupe, fiche IA, style du Word). Il reste moins de trois semaines avant le dépôt Moodle du 08/12.
 
 **Pour la suite** : section « pièges fréquents » interactive sur le site (trouver l'erreur dans un calcul). Prochain passage le 26/11 (semaine 48, paire) : humaniser, dont la fiche mémo.
+
+## 26/11/2026 : semaine ISO 48, humaniser : oui (semaine paire)
+
+**Site**
+- Nouvelle section « Trouve l'erreur » (`#pieges`, `js/pieges.js`) : quatre calculs du fil rouge, chacun avec une ligne fausse à repérer (roulette calculée sur les poids, réparation qui retire l'objet le plus lourd, réparation oubliée après mutation, mutation sautée parce qu'il n'y a pas eu de croisement). Les corrections affichent les vrais chiffres du moteur.
+- Passe humaniser : fiche mémo (sous-titre, deux pièges reformulés sans « au lieu de ») et une phrase du défi. Le reste du texte visible avait été repris en semaine 46.
+
+**Word** : nouvelle version `cours-word/sujet7_cours_v2026-11-26.docx` (versions précédentes conservées).
+- Humaniser : justification de N = 6 et un piège reformulés.
+- Ajout d'un renvoi vers la section « Trouve l'erreur » du site, dans la partie « Pièges fréquents ».
+- 7 pages sous LibreOffice : 5 de cours, 2 d'annexe.
+
+**Vérification**
+- `verifier.py` : OK. `verifier_docx.py` sur les quatre versions du Word : OK.
+- `test_site.js` étendu : les 4 cas de « Trouve l'erreur » donnent 4 / 4 avec les bonnes lignes, et les corrections contiennent 34 / 146 = 23,3 %, le retrait de F, la fitness 29 après réparation et la mutation sur E et G. Fiche mémo toujours sur 1 page A4. Aucune erreur JavaScript, pas de débordement à 390 px.
+- Aucune erreur trouvée dans les calculs.
+
+**À valider par le groupe ou le prof** : toujours ouverts (choix N = 6 et pm = 0,10, outil en ligne exact, références citées de mémoire, noms du groupe, fiche IA, style du Word). Le prochain passage (03/12) est le dernier avant le dépôt Moodle du 08/12 : ces points doivent être tranchés d'ici là.
+
+**Pour la suite** : 03/12 (semaine 49, impaire), relecture finale du Word avant dépôt. Du 08 au 11/12, fiche d'animation orale.

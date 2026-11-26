@@ -60,5 +60,6 @@ button:disabled{cursor:default}
 .df-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:10px}
 .df-o{text-align:left;display:flex;flex-direction:column;gap:2px}.df-pv{font-size:.8rem;color:var(--muted)}
 .df-trop{color:var(--accent)}#dfMsg{min-height:3em}
+.pg-l{margin:6px 0 0;padding-left:22px}.pg-l li{margin:6px 0}.pg-l button{width:100%;text-align:left;min-height:0;padding:7px 10px}
 @media print{#animation .btns,#quiz .btns button:not(.bon){display:none}
 nav.som,#simulateur .btns,#simulateur .reg{display:none}details{border:0}details>*{display:block}}
