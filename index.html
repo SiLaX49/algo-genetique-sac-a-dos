@@ -16,7 +16,7 @@
 </header>
 </div>
 <nav class="som"><div>
-  <a href="#probleme">Problème</a><a href="#phases">Les phases</a><a href="#cycle">Un cycle à la main</a><a href="#animation">Animation</a><a href="#simulateur">Simulateur</a><a href="#defi">Défi</a><a href="#bilan">Bilan</a><a href="#exercice">Exercice</a><a href="#auto-eval">Quiz</a><a href="#refs">Références</a><a href="labo.html">Labo</a><a href="memo.html">Fiche mémo</a>
+  <a href="#probleme">Problème</a><a href="#phases">Les phases</a><a href="#cycle">Un cycle à la main</a><a href="#animation">Animation</a><a href="#simulateur">Simulateur</a><a href="#defi">Défi</a><a href="#bilan">Bilan</a><a href="#exercice">Exercice</a><a href="#pieges">Trouve l'erreur</a><a href="#auto-eval">Quiz</a><a href="#refs">Références</a><a href="labo.html">Labo</a><a href="memo.html">Fiche mémo</a>
 </div></nav>
 <main class="wrap">
 
@@ -167,7 +167,7 @@ RENVOYER le meilleur chromosome rencontré</pre>
     <div class="btns"><button id="dfVider" type="button">Vider le sac</button></div>
     <p id="dfScore" class="note"></p>
   </div>
-  <p class="note">Avec 7 objets, on trouve l'optimum à la main en quelques essais. À 60 objets, il y aurait plus de 10<sup>18</sup> sacs possibles, et c'est pour ce cas que l'algorithme génétique existe.</p>
+  <p class="note">Avec 7 objets, on trouve l'optimum à la main en quelques essais. À 60 objets, il y aurait plus de 10<sup>18</sup> sacs possibles, et l'algorithme génétique sert justement à ce genre de taille.</p>
 </section>
 
 <section id="bilan">
@@ -187,6 +187,14 @@ RENVOYER le meilleur chromosome rencontré</pre>
   <ul id="lExoTir"></ul>
   <p>Questions : (1) réparer et évaluer ; (2) calculer P<sub>i</sub> et les cumuls ; (3) identifier les couples ; (4) croiser ; (5) muter et réparer ; (6) appliquer l'élitisme et donner la nouvelle population ; (7) comparer au glouton et à l'optimum.</p>
   <details><summary>Voir la correction</summary><div id="exoCorr"></div></details>
+</section>
+
+<section id="pieges">
+  <h2>Trouve l'erreur</h2>
+  <p>Chaque calcul ci-dessous reprend le fil rouge, et une seule ligne est fausse. Clique sur celle que tu soupçonnes : la correction s'affiche avec les vrais chiffres. Ce sont les erreurs qu'on voit le plus souvent quand on déroule un cycle à la main.</p>
+  <div id="pgListe"></div>
+  <div class="btns"><button id="pgReset" type="button">Recommencer</button></div>
+  <p id="pgScore" class="note" aria-live="polite"></p>
 </section>
 
 <section id="auto-eval">
@@ -215,5 +223,6 @@ RENVOYER le meilleur chromosome rencontré</pre>
 <script src="js/site.js"></script>
 <script src="js/interactif.js"></script>
 <script src="js/defi.js"></script>
+<script src="js/pieges.js"></script>
 </body>
 </html>

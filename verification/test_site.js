@@ -46,6 +46,16 @@ const R = require("./resultats.json");
   check((await p.innerText("#dfMsg")).startsWith("Trop lourd de 6 kg"), "défi : surcharge");
   await p.click("#dfVider");
   check((await p.innerText("#dfVal")) === "0 pts", "défi : vider");
+  // Trouve l'erreur : 4 cas, la bonne ligne donne 4 / 4 et des corrections conformes au moteur
+  const nP = await p.evaluate(() => window.__PIEGES.length);
+  check(nP === 4, "trouve l'erreur : 4 cas");
+  for (let i = 0; i < nP; i++) {
+    const f = await p.evaluate(i => window.__PIEGES[i].faux, i);
+    await p.click('#pgListe button[data-c="' + i + '"][data-l="' + f + '"]');
+  }
+  check((await p.innerText("#pgScore")).includes("4 / 4"), "trouve l'erreur : score");
+  const pg = await p.innerText("#pgListe");
+  check(pg.includes("34 / 146 = 23,3 %") && pg.includes("C'est F") && pg.includes("la fitness vaut 29") && pg.includes("mute sur E et G"), "trouve l'erreur : corrections");
   // Fiche mémo : chiffres du moteur, une seule page A4 à l'impression
   await p.goto("http://localhost:8123/memo.html", { waitUntil: "load" });
   const memo = (await p.innerText("#mRes")).replace(/\s/g, "");
